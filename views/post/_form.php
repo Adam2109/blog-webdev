@@ -2,6 +2,8 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use app\models\Category;
+use yii\helpers\ArrayHelper;
 
 /** @var yii\web\View $this */
 /** @var app\models\Post $model */
@@ -18,17 +20,30 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'date')->textInput() ?>
+    <?= $form->field($model, 'date')->textInput(['type' => 'date']) ?> <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'viewed')->textInput() ?>
+    <?php // echo $form->field($model, 'viewed')->textInput() ?>
 
     <?= $form->field($model, 'user_id')->textInput() ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?php
 
-    <?= $form->field($model, 'category_id')->textInput() ?>
+    echo $form->field($model, 'status')->dropDownList([
+            0 => 'Чорнетка',
+            1 => 'Опубліковано'
+    ]);
+    ?>
+
+    <?php
+
+    $categories = Category::find()->all();
+    $listData = ArrayHelper::map($categories, 'id', 'title');
+
+    echo $form->field($model, 'category_id')->dropDownList(
+            $listData,
+            ['prompt' => 'Оберіть категорію...']
+    );
+    ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
