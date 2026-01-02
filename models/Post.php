@@ -27,6 +27,7 @@ class Post extends \yii\db\ActiveRecord
 {
 
     public $imageFile;
+    public $tagsInput;
     /**
      * {@inheritdoc}
      */
@@ -51,6 +52,7 @@ class Post extends \yii\db\ActiveRecord
             [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['tagsInput'], 'string'],
         ];
     }
 
@@ -113,4 +115,36 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function getTags()
+    {
+        return $this->hasMany(Tag::class, ['id' => 'tag_id'])
+            ->viaTable('post_tag', ['post_id' => 'id']);
+    }
+    public function afterSave($insert, $changedAttributes)
+    {
+        parent::afterSave($insert, $changedAttributes);
+
+
+        if ($this->tagsInput) {
+
+            $this->unlinkAll('tags', true);
+
+            $tagsArray = explode(',', $this->tagsInput);
+
+            foreach ($tagsArray as $tagName) {
+                $tagName = trim($tagName);
+                if (empty($tagName)) continue;
+
+
+                $tag = Tag::findOne(['title' => $tagName]);
+                if (!$tag) {
+                    $tag = new Tag();
+                    $tag->title = $tagName;
+                    $tag->save();
+                }
+
+                $this->link('tags', $tag);
+            }
+        }
+    }
 }

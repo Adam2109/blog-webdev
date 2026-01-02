@@ -61,7 +61,7 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($category_id = null, $search = null)
+    public function actionIndex($category_id = null, $search = null, $tag = null)
     {
         $query = Post::find()->where(['status' => 1]);
 
@@ -76,12 +76,17 @@ class SiteController extends Controller
             ]);
         }
 
+        if ($tag) {
+            // Приєднуємо таблицю тегів і шукаємо по назві
+            $query->joinWith('tags')->andWhere(['tag.title' => $tag]);
+        }
+
 
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
 
         $posts = $query->offset($pages->offset)
             ->limit($pages->limit)
-            ->orderBy(['id' => SORT_DESC])
+            ->orderBy(['post.id' => SORT_DESC])
             ->all();
 
         $categories = Category::find()->all();

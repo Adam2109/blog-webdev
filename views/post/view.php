@@ -33,7 +33,17 @@ $this->params['breadcrumbs'][] = $this->title;
             Переглядів: <b><?= $model->viewed ?></b>
         </small>
     </p>
-
+    <?php if (!empty($model->tags)): ?>
+        <div class="mb-3">
+            <strong>Теги:</strong>
+            <?php foreach ($model->tags as $tag): ?>
+                <a href="<?= \yii\helpers\Url::to(['site/index', 'tag' => $tag->title]) ?>" class="badge bg-secondary text-decoration-none">
+                    <?= \yii\helpers\Html::encode($tag->title) ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+    <hr>
     <?php if (!Yii::$app->user->isGuest): ?>
         <p>
             <?= Html::a('Редагувати', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>

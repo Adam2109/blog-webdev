@@ -35,7 +35,6 @@ use yii\helpers\ArrayHelper;
     ?>
 
     <?php
-
     $categories = Category::find()->all();
     $listData = ArrayHelper::map($categories, 'id', 'title');
 
@@ -45,6 +44,7 @@ use yii\helpers\ArrayHelper;
     );
     ?>
 
+    <?= $form->field($model, 'tagsInput')->textInput(['placeholder' => 'Введіть теги через кому (напр.: IT, News, Yii2)']) ?>
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>
     </div>
