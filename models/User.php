@@ -55,4 +55,8 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->hasMany(Comment::class, ['user_id' => 'id']);
     }
+    public function isAdmin()
+    {
+        return $this->role === 1;
+    }
 }

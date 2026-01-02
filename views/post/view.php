@@ -47,7 +47,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <hr>
 
-        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->id == $model->user_id): ?>
+        <?php if (!Yii::$app->user->isGuest && Yii::$app->user->identity->isAdmin()): ?>
             <div class="mb-3">
                 <?= Html::a('Редагувати', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
                 <?= Html::a('Видалити', ['delete', 'id' => $model->id], [

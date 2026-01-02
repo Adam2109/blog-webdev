@@ -34,6 +34,10 @@ class PostController extends Controller
                             'actions' => ['create', 'update', 'delete'],
                             'allow' => true,
                             'roles' => ['@'],
+                            'matchCallback' => function ($rule, $action) {
+
+                                return Yii::$app->user->identity->isAdmin();
+                            }
                         ],
                     ],
                 ],
