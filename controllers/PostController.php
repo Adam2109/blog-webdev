@@ -57,7 +57,7 @@ class PostController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-
+        $model->updateCounters(['viewed' => 1]);
         $commentForm = new Comment();
 
         if ($commentForm->load($this->request->post())) {

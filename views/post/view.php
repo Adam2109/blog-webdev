@@ -29,7 +29,8 @@ $this->params['breadcrumbs'][] = $this->title;
     <p class="text-muted">
         <small>
             Дата: <?= Yii::$app->formatter->asDate($model->date, 'long') ?> |
-            Категорія: <b><?= $model->category ? $model->category->title : 'Без категорії' ?></b>
+            Категорія: <b><?= $model->category ? $model->category->title : 'Без категорії' ?></b> |
+            Переглядів: <b><?= $model->viewed ?></b>
         </small>
     </p>
 

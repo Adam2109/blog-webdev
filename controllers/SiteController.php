@@ -61,14 +61,21 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex($category_id = null)
+    public function actionIndex($category_id = null, $search = null)
     {
-
         $query = Post::find()->where(['status' => 1]);
 
         if ($category_id) {
             $query->andWhere(['category_id' => $category_id]);
         }
+
+        if ($search) {
+            $query->andWhere(['or',
+                ['like', 'title', $search],
+                ['like', 'description', $search]
+            ]);
+        }
+
 
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
 
