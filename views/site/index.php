@@ -1,10 +1,11 @@
 <?php
 use yii\helpers\Url;
 use yii\widgets\LinkPager;
-
+use yii\helpers\Html;
 /** @var yii\web\View $this */
 /** @var app\models\Post[] $posts */
 /** @var yii\data\Pagination $pages */
+/** @var app\models\Category[] $categories */
 
 $this->title = 'Мій IT Блог';
 ?>
@@ -50,12 +51,35 @@ $this->title = 'Мій IT Блог';
             </div>
 
             <div class="col-md-3">
+
                 <div class="card mb-3">
-                    <div class="card-header">Про блог</div>
+                    <div class="card-header bg-primary text-white">Категорії</div>
+                    <ul class="list-group list-group-flush">
+
+                        <li class="list-group-item">
+                            <a href="<?= Url::to(['site/index']) ?>" class="text-decoration-none">
+                                Всі статті
+                            </a>
+                        </li>
+
+                        <?php foreach ($categories as $category): ?>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <a href="<?= Url::to(['site/index', 'category_id' => $category->id]) ?>" class="text-decoration-none">
+                                    <?= Html::encode($category->title) ?>
+                                </a>
+                            </li>
+                        <?php endforeach; ?>
+
+                    </ul>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">Про автора</div>
                     <div class="card-body">
-                        Курсова робота на тему Веб-розробки. Тут ми публікуємо новини про Yii2 та PHP.
+                        <p>Вітаю! Це мій блог, розроблений на Yii2 в рамках курсового проекту.</p>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

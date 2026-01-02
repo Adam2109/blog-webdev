@@ -11,6 +11,7 @@ use app\models\LoginForm;
 use app\models\ContactForm;
 use app\models\Post;
 use yii\data\Pagination;
+use app\models\Category;
 class SiteController extends Controller
 {
     /**
@@ -60,19 +61,28 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex($category_id = null)
     {
+
         $query = Post::find()->where(['status' => 1]);
 
+        if ($category_id) {
+            $query->andWhere(['category_id' => $category_id]);
+        }
+
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
+
         $posts = $query->offset($pages->offset)
             ->limit($pages->limit)
             ->orderBy(['id' => SORT_DESC])
             ->all();
 
+        $categories = Category::find()->all();
+
         return $this->render('index', [
             'posts' => $posts,
             'pages' => $pages,
+            'categories' => $categories,
         ]);
     }
 
