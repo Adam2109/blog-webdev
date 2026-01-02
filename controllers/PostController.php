@@ -142,8 +142,29 @@ class PostController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $oldImage = $model->image;
+
+        if ($this->request->isPost && $model->load($this->request->post())) {
+
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+
+            if ($model->imageFile) {
+
+                $uid = md5(uniqid(rand(), true));
+                $fileName = $uid . '.' . $model->imageFile->extension;
+                $uploadPath = \Yii::getAlias('@webroot/uploads/');
+
+                $model->imageFile->saveAs($uploadPath . $fileName);
+
+                $model->image = $fileName;
+            } else {
+
+                $model->image = $oldImage;
+            }
+
+            if ($model->save(false)) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [
