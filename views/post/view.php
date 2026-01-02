@@ -9,7 +9,7 @@ use yii\helpers\Url;
 /** @var app\models\Comment $commentForm */
 
 $this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Головна', 'url' => ['site/index']];
+
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -92,7 +92,7 @@ $this->params['breadcrumbs'][] = $this->title;
             </div>
         </div>
 
-        <div class="comments-section bg-light p-4 rounded">
+        <div class="comments-section bg-dark-custom p-4 rounded">
             <h3>Коментарі (<?= count($model->comments) ?>)</h3>
             <hr>
 

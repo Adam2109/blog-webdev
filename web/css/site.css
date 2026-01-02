@@ -86,3 +86,147 @@ a.desc:after {
 .form-group {
     margin-bottom: 1rem;
 }
+
+/* =========================================
+   DARK THEME + NEON GLOW (Фінальна версія)
+   ========================================= */
+
+/* 1. Основний фон і текст */
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+/* 2. Картки */
+.card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #e0e0e0; /* <--- ВАЖЛИВО: Задає колір для всього тексту всередині */
+}
+
+.card-header {
+    background-color: #252525 !important;
+    border-bottom: 1px solid #333;
+    color: #fff;
+}
+
+.list-group-item {
+    background-color: #1e1e1e;
+    border-color: #333;
+    color: #e0e0e0;
+}
+
+/* 3. Посилання з ефектом світіння */
+a {
+    color: #6ea8fe;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+a:hover {
+    color: #9ec5fe;
+    text-shadow: 0 0 8px rgba(158, 197, 254, 0.6);
+}
+
+a.text-dark {
+    color: #e0e0e0 !important;
+}
+
+a.text-dark:hover {
+    color: #fff !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* 4. Форми */
+.form-control {
+    background-color: #2c2c2c;
+    border: 1px solid #444;
+    color: #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: #333;
+    color: #fff;
+    border-color: #6ea8fe;
+    box-shadow: 0 0 10px rgba(13, 110, 253, 0.4);
+}
+
+/* 5. Таблиці */
+.table {
+    color: #e0e0e0;
+    border-color: #333;
+}
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+    color: #e0e0e0;
+    box-shadow: inset 0 0 0 9999px rgba(255, 255, 255, 0.05);
+}
+
+/* 6. Хлібні крихти */
+.breadcrumb-item.active {
+    color: #a0a0a0;
+}
+
+/* 7. Code */
+pre, code {
+    color: #e685b5;
+}
+
+/* 8. Fix background light */
+.bg-dark-custom {
+    background-color: #1e1e1e !important;
+    border: 1px solid #333;
+}
+
+/* 9. Text muted (дати, перегляди) */
+.text-muted {
+    color: #b0b0b0 !important;
+}
+
+.text-muted i {
+    color: #a0a0a0;
+}
+
+/* 10. Текст карток */
+.card-text {
+    color: #e0e0e0;
+}
+
+/* 11. Кольорові заголовки */
+.card-header.bg-primary,
+.card-header.bg-success {
+    color: #fff !important;
+}
+
+/* 12. Placeholder */
+::placeholder {
+    color: #888 !important;
+    opacity: 1;
+}
+
+/* 13. Футер */
+#footer {
+    background-color: #1e1e1e !important;
+    border-top: 1px solid #333 !important;
+}
+
+/* === 14. ВИПРАВЛЕННЯ ДЛЯ ПРОФІЛЮ ТА "ПРО АВТОРА" (ВАЖЛИВО) === */
+
+/* Заголовки (H1-H6) робимо білими */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    color: #f8fafc !important;
+}
+
+/* Клас text-secondary (Університет) робимо світлим */
+.text-secondary {
+    color: #adb5bd !important; /* Світло-сірий */
+}
+
+/* Списки (ul li) всередині карток робимо світлими */
+.card ul li {
+    color: #e0e0e0;
+}
+.card-body {
+    color: #e0e0e0; /* Підстраховка для всього тексту в блоці */
+}
+/* === END THEME === */

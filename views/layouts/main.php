@@ -36,7 +36,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         NavBar::begin([
                 'brandLabel' => 'IT Блог',
                 'brandUrl' => Yii::$app->homeUrl,
-                'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
+                'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top',
+                        'style' => 'border-bottom: 1px solid #333;',]
         ]);
 
         $menuItems = [
@@ -45,31 +46,36 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         ];
 
         if (Yii::$app->user->isGuest) {
-            $menuItems[] = ['label' => 'Реєстрація', 'url' => ['/site/signup']];
-            $menuItems[] = ['label' => 'Вхід', 'url' => ['/site/login']];
+
+            $menuItems[] = [
+                    'label' => '<i class="bi bi-person-plus-fill"></i> Реєстрація',
+                    'url' => ['/site/signup']
+            ];
+            $menuItems[] = [
+                    'label' => '<i class="bi bi-box-arrow-in-right"></i> Вхід',
+                    'url' => ['/site/login']
+            ];
         } else {
 
             $menuItems[] = [
-                    'label' => 'Мій профіль (' . Yii::$app->user->identity->username . ')',
+                    'label' => '<i class="bi bi-person-circle"></i> Мій профіль (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/profile']
             ];
-
 
             $menuItems[] = '<li class="nav-item">'
                     . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
                     . Html::submitButton(
-                            'Вихід',
+                            '<i class="bi bi-box-arrow-right"></i> Вихід',
                             ['class' => 'nav-link btn btn-link logout']
                     )
                     . Html::endForm()
                     . '</li>';
-
         }
-
 
         echo Nav::widget([
                 'options' => ['class' => 'navbar-nav ms-auto'],
                 'items' => $menuItems,
+                'encodeLabels' => false,
         ]);
 
         NavBar::end();
@@ -79,14 +85,17 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <main id="main" class="flex-shrink-0" role="main">
         <div class="container">
             <?php if (!empty($this->params['breadcrumbs'])): ?>
-                <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
+                <?= Breadcrumbs::widget([
+                        'homeLink' => ['label' => 'Головна', 'url' => ['/site/index']], // <--- ЗАМІНА HOME НА ГОЛОВНА
+                        'links' => $this->params['breadcrumbs'],
+                ]) ?>
             <?php endif ?>
             <?= Alert::widget() ?>
             <?= $content ?>
         </div>
     </main>
 
-    <footer id="footer" class="mt-auto py-3 bg-light">
+    <footer id="footer" class="mt-auto py-4 bg-dark text-white-50" style="border-top: 1px solid #333;">
         <div class="container">
             <div class="row text-muted">
                 <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
