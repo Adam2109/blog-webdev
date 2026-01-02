@@ -164,7 +164,35 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+    public function actionProfileEdit()
+    {
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
 
+        $model = Yii::$app->user->identity; // Беремо поточного юзера
+
+        // Якщо форму відправлено
+        if ($model->load(Yii::$app->request->post())) {
+
+            // Завантажуємо файл
+            $model->imageFile = \yii\web\UploadedFile::getInstance($model, 'imageFile');
+
+            // Якщо файл є - завантажуємо, якщо ні - просто зберігаємо текст
+            if ($model->imageFile) {
+                $model->upload();
+            }
+
+            if ($model->save()) {
+                Yii::$app->session->setFlash('success', 'Профіль успішно оновлено!');
+                return $this->redirect(['site/profile']);
+            }
+        }
+
+        return $this->render('profile-edit', [
+            'model' => $model,
+        ]);
+    }
     public function actionAbout()
     {
         return $this->render('about');

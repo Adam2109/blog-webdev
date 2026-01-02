@@ -15,20 +15,30 @@ $this->params['breadcrumbs'][] = $this->title;
         <div class="col-md-4">
             <div class="card mb-4 shadow-sm">
                 <div class="card-body text-center">
-                    <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+
+                    <?php
+                    $avatar = $model->image
+                            ? Yii::getAlias('@web/uploads/') . $model->image
+                            : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                    ?>
+                    <img src="<?= $avatar ?>"
                          alt="User Avatar"
                          class="rounded-circle img-fluid mb-3"
-                         style="width: 150px;">
-
+                         style="width: 150px; height: 150px; object-fit: cover; border: 3px solid #333;">
                     <h3 class="card-title"><?= Html::encode($model->username) ?></h3>
 
-                    <p class="text-muted">
+                    <p class="text-muted mb-3">
                         <?= $model->isAdmin() ? '<span class="badge bg-danger">Адміністратор</span>' : 'Користувач' ?>
                     </p>
 
+                    <div class="d-grid gap-2 mb-3">
+                        <a href="<?= Url::to(['site/profile-edit']) ?>" class="btn btn-primary">
+                            <i class="bi bi-pencil-square"></i> Редагувати профіль
+                        </a>
+                    </div>
                     <hr>
                     <div class="d-grid gap-2">
-                        <?= Html::a('Вийти', ['site/logout'], [
+                        <?= Html::a('<i class="bi bi-box-arrow-right"></i> Вийти', ['site/logout'], [
                                 'class' => 'btn btn-outline-danger',
                                 'data-method' => 'post'
                         ]) ?>
