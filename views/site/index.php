@@ -1,53 +1,54 @@
 <?php
+use yii\helpers\Url;
+use yii\widgets\LinkPager;
 
 /** @var yii\web\View $this */
+/** @var app\models\Post[] $posts */
+/** @var yii\data\Pagination $pages */
 
-$this->title = 'My Yii Application';
+$this->title = 'Мій IT Блог';
 ?>
+
 <div class="site-index">
-
-    <div class="jumbotron text-center bg-transparent mt-5 mb-5">
-        <h1 class="display-4">Congratulations!</h1>
-
-        <p class="lead">You have successfully created your Yii-powered application.</p>
-
-        <p><a class="btn btn-lg btn-success" href="https://www.yiiframework.com">Get started with Yii</a></p>
-    </div>
-
     <div class="body-content">
-
         <div class="row">
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
+            <div class="col-md-9">
+                <?php foreach ($posts as $post): ?>
+                    <div class="post-item" style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                        <h2>
+                            <a href="<?= Url::to(['post/view', 'id' => $post->id]) ?>">
+                                <?= $post->title ?>
+                            </a>
+                        </h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
+                        <p class="text-muted">
+                            <small>
+                                Дата: <?= $post->date ?> |
+                                Категорія: <?= $post->category ? $post->category->title : 'Без категорії' ?>
+                            </small>
+                        </p>
 
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/doc/">Yii Documentation &raquo;</a></p>
+                        <p><?= $post->description ?></p>
+
+                        <a class="btn btn-outline-primary" href="<?= Url::to(['post/view', 'id' => $post->id]) ?>">
+                            Читати далі &raquo;
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+
+                <div class="pagination-wrapper">
+                    <?= LinkPager::widget(['pagination' => $pages]) ?>
+                </div>
             </div>
-            <div class="col-lg-4 mb-3">
-                <h2>Heading</h2>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/forum/">Yii Forum &raquo;</a></p>
-            </div>
-            <div class="col-lg-4">
-                <h2>Heading</h2>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et
-                    dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
-                    ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                    fugiat nulla pariatur.</p>
-
-                <p><a class="btn btn-outline-secondary" href="https://www.yiiframework.com/extensions/">Yii Extensions &raquo;</a></p>
+            <div class="col-md-3">
+                <div class="card mb-3">
+                    <div class="card-header">Про блог</div>
+                    <div class="card-body">
+                        Курсова робота на тему Веб-розробки. Тут ми публікуємо новини про Yii2 та PHP.
+                    </div>
+                </div>
             </div>
         </div>
-
     </div>
 </div>

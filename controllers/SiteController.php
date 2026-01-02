@@ -9,7 +9,8 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
-
+use app\models\Post;
+use yii\data\Pagination;
 class SiteController extends Controller
 {
     /**
@@ -61,7 +62,18 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $query = Post::find()->where(['status' => 1]);
+
+        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
+        $posts = $query->offset($pages->offset)
+            ->limit($pages->limit)
+            ->orderBy(['id' => SORT_DESC])
+            ->all();
+
+        return $this->render('index', [
+            'posts' => $posts,
+            'pages' => $pages,
+        ]);
     }
 
     /**
