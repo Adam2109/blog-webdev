@@ -89,11 +89,14 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php if (!empty($model->comments)): ?>
             <?php foreach ($model->comments as $comment): ?>
-                <div class="card mb-3 shadow-sm">
+                <div class="card mb-3 shadow-sm <?= $comment->parent_id ? 'ms-5 border-start border-primary border-4' : '' ?>">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <h5 class="card-title text-primary m-0">
                                 <?= Html::encode($comment->user ? $comment->user->username : 'Гість') ?>
+                                <?php if($comment->parent_id): ?>
+                                    <small class="text-muted" style="font-size: 0.8em;">(відповідь)</small>
+                                <?php endif; ?>
                             </h5>
                             <small class="text-muted">
                                 <?= Yii::$app->formatter->asDate($comment->date, 'medium') ?>
@@ -102,6 +105,14 @@ $this->params['breadcrumbs'][] = $this->title;
                         <p class="card-text">
                             <?= Html::encode($comment->text) ?>
                         </p>
+
+                        <?php if (!Yii::$app->user->isGuest): ?>
+                            <button class="btn btn-sm btn-outline-secondary reply-btn"
+                                    data-id="<?= $comment->id ?>"
+                                    data-user="<?= Html::encode($comment->user->username) ?>">
+                                ↩ Відповісти
+                            </button>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -110,21 +121,26 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
 
         <div class="mt-4">
-            <h4>Залишити коментар</h4>
+            <h4 id="comment-label">Залишити коментар</h4>
 
             <?php if (!Yii::$app->user->isGuest): ?>
                 <div class="comment-form">
                     <?php $form = ActiveForm::begin([
-                            'action' => ['post/view', 'id' => $model->id], // Явно вказуємо куди слати форму
+                            'action' => ['post/view', 'id' => $model->id],
                     ]); ?>
+
+                    <?= $form->field($commentForm, 'parent_id')->hiddenInput(['class' => 'parent-id-input'])->label(false) ?>
 
                     <?= $form->field($commentForm, 'text')->textarea([
                             'rows' => 3,
-                            'placeholder' => 'Напишіть вашу думку...'
+                            'placeholder' => 'Напишіть вашу думку...',
+                            'id' => 'comment-text-area'
                     ])->label(false) ?>
 
-                    <div class="form-group">
-                        <?= Html::submitButton('Надіслати коментар', ['class' => 'btn btn-success']) ?>
+                    <div class="d-flex justify-content-between">
+                        <?= Html::submitButton('Надіслати', ['class' => 'btn btn-success']) ?>
+
+                        <button type="button" class="btn btn-link text-danger cancel-reply" style="display: none;">Скасувати відповідь</button>
                     </div>
 
                     <?php ActiveForm::end(); ?>
@@ -138,5 +154,38 @@ $this->params['breadcrumbs'][] = $this->title;
             <?php endif; ?>
         </div>
     </div>
+</div>
+
+<?php
+$js = <<<JS
+    
+    $('.reply-btn').on('click', function() {
+        var parentId = $(this).data('id');     
+        var username = $(this).data('user');     
+        
+       
+        $('.parent-id-input').val(parentId);
+        
+        $('#comment-label').text('Відповідь для ' + username);
+        $('#comment-text-area').attr('placeholder', '@' + username + ', ');
+        $('#comment-text-area').focus();
+        
+        
+        $('.cancel-reply').show();
+        
+        $('html, body').animate({
+            scrollTop: $(".comment-form").offset().top
+        }, 500);
+    });
+
+    $('.cancel-reply').on('click', function() {
+        $('.parent-id-input').val('');
+        $('#comment-label').text('Залишити коментар');
+        $('#comment-text-area').attr('placeholder', 'Напишіть вашу думку...');
+        $(this).hide();
+    });
+JS;
+$this->registerJs($js);
+?>
 
 </div>
