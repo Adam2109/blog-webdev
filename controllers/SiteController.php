@@ -135,7 +135,23 @@ class SiteController extends Controller
 
         return $this->goHome();
     }
+    /**
+     * User Profile Page
+     */
+    public function actionProfile()
+    {
+        // Якщо гість - відправляємо на вхід
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['login']);
+        }
 
+        // Отримуємо поточного користувача
+        $user = Yii::$app->user->identity;
+
+        return $this->render('profile', [
+            'model' => $user,
+        ]);
+    }
     public function actionContact()
     {
         $model = new ContactForm();

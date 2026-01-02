@@ -37,29 +37,36 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                 'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
         ]);
 
-        // 1. Спочатку формуємо масив пунктів меню
         $menuItems = [
                 ['label' => 'Головна', 'url' => ['/site/index']],
                 ['label' => 'Про нас', 'url' => ['/site/about']],
                 ['label' => 'Контакти', 'url' => ['/site/contact']],
         ];
 
-        // 2. Додаємо логіку (гість чи користувач)
         if (Yii::$app->user->isGuest) {
             $menuItems[] = ['label' => 'Реєстрація', 'url' => ['/site/signup']];
             $menuItems[] = ['label' => 'Вхід', 'url' => ['/site/login']];
         } else {
+            // === ЗМІНИ ТУТ ===
+            // 1. Посилання на Профіль з іменем юзера
+            $menuItems[] = [
+                    'label' => 'Мій профіль (' . Yii::$app->user->identity->username . ')',
+                    'url' => ['/site/profile']
+            ];
+
+            // 2. Кнопка Вихід (тепер просто "Вихід")
             $menuItems[] = '<li class="nav-item">'
                     . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
                     . Html::submitButton(
-                            'Вихід (' . Yii::$app->user->identity->username . ')',
+                            'Вихід',
                             ['class' => 'nav-link btn btn-link logout']
                     )
                     . Html::endForm()
                     . '</li>';
+            // =================
         }
 
-        // 3. І тільки тепер виводимо віджет
+
         echo Nav::widget([
                 'options' => ['class' => 'navbar-nav ms-auto'],
                 'items' => $menuItems,
