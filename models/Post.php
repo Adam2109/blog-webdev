@@ -4,7 +4,7 @@ namespace app\models;
 
 use Yii;
 use app\models\Comment;
-
+use app\models\Like;
 /**
  * This is the model class for table "post".
  *
@@ -120,6 +120,26 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasMany(Comment::class, ['post_id' => 'id']);
     }
 
+    public function getLikes()
+    {
+        return $this->hasMany(Like::class, ['post_id' => 'id']);
+    }
+
+
+    public function getLikesCount()
+    {
+        return $this->getLikes()->count();
+    }
+
+    public function isLikedByCurrentUser()
+    {
+        if (Yii::$app->user->isGuest) {
+            return false;
+        }
+        return Like::find()
+            ->where(['post_id' => $this->id, 'user_id' => Yii::$app->user->id])
+            ->exists();
+    }
 
     public function afterSave($insert, $changedAttributes)
     {

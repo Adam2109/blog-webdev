@@ -11,6 +11,8 @@ use yii\filters\VerbFilter;
 use app\models\Comment;
 use yii\web\UploadedFile;
 use yii\filters\AccessControl;
+use app\models\Like;
+use yii\web\Response;
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -219,5 +221,39 @@ class PostController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionLike($id)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        if (Yii::$app->user->isGuest) {
+            return ['success' => false, 'message' => 'Login required'];
+        }
+
+        $userId = Yii::$app->user->id;
+        $like = Like::findOne(['post_id' => $id, 'user_id' => $userId]);
+
+        if ($like) {
+
+            $like->delete();
+            $isLiked = false;
+        } else {
+
+            $like = new Like();
+            $like->post_id = $id;
+            $like->user_id = $userId;
+            $like->save();
+            $isLiked = true;
+        }
+
+
+        $count = Like::find()->where(['post_id' => $id])->count();
+
+        return [
+            'success' => true,
+            'likesCount' => $count,
+            'isLiked' => $isLiked,
+        ];
     }
 }

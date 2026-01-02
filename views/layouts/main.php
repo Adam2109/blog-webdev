@@ -24,6 +24,8 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     <html lang="<?= Yii::$app->language ?>" class="h-100">
     <head>
         <title><?= Html::encode($this->title) ?></title>
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
         <?php $this->head() ?>
     </head>
     <body class="d-flex flex-column h-100">
@@ -47,14 +49,13 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             $menuItems[] = ['label' => 'Реєстрація', 'url' => ['/site/signup']];
             $menuItems[] = ['label' => 'Вхід', 'url' => ['/site/login']];
         } else {
-            // === ЗМІНИ ТУТ ===
-            // 1. Посилання на Профіль з іменем юзера
+
             $menuItems[] = [
                     'label' => 'Мій профіль (' . Yii::$app->user->identity->username . ')',
                     'url' => ['/site/profile']
             ];
 
-            // 2. Кнопка Вихід (тепер просто "Вихід")
+
             $menuItems[] = '<li class="nav-item">'
                     . Html::beginForm(['/site/logout'], 'post', ['class' => 'form-inline'])
                     . Html::submitButton(
@@ -63,7 +64,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                     )
                     . Html::endForm()
                     . '</li>';
-            // =================
+
         }
 
 
