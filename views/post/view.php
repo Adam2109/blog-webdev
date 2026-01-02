@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
+use yii\helpers\Url;
 
 /** @var yii\web\View $this */
 /** @var app\models\Post $model */
@@ -15,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="post-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
+
     <?php if ($model->image): ?>
         <div class="mb-4 text-center">
             <img src="<?= Yii::getAlias('@web/uploads/') . $model->image ?>"
@@ -23,6 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
                  style="max-width: 100%; height: auto;">
         </div>
     <?php endif; ?>
+
     <p class="text-muted">
         <small>
             Дата: <?= Yii::$app->formatter->asDate($model->date, 'long') ?> |
@@ -30,16 +33,18 @@ $this->params['breadcrumbs'][] = $this->title;
         </small>
     </p>
 
-    <p>
-        <?= Html::a('Редагувати', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Видалити', ['delete', 'id' => $model->id], [
-                'class' => 'btn btn-danger',
-                'data' => [
-                        'confirm' => 'Ви впевнені, що хочете видалити цю статтю?',
-                        'method' => 'post',
-                ],
-        ]) ?>
-    </p>
+    <?php if (!Yii::$app->user->isGuest): ?>
+        <p>
+            <?= Html::a('Редагувати', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+            <?= Html::a('Видалити', ['delete', 'id' => $model->id], [
+                    'class' => 'btn btn-danger',
+                    'data' => [
+                            'confirm' => 'Ви впевнені, що хочете видалити цю статтю?',
+                            'method' => 'post',
+                    ],
+            ]) ?>
+        </p>
+    <?php endif; ?>
 
     <hr>
 
@@ -51,6 +56,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <hr>
 
+    <div class="social-share mt-4 mb-4">
+        <h5>Поділитися:</h5>
+
+        <a href="https://t.me/share/url?url=<?= Url::current([], true) ?>&text=<?= Html::encode($model->title) ?>"
+           target="_blank" class="btn btn-primary btn-sm" style="background-color: #0088cc; border: none;">
+            Telegram
+        </a>
+
+        <a href="https://www.facebook.com/sharer/sharer.php?u=<?= Url::current([], true) ?>"
+           target="_blank" class="btn btn-primary btn-sm" style="background-color: #3b5998; border: none;">
+            Facebook
+        </a>
+
+        <a href="https://twitter.com/intent/tweet?text=<?= Html::encode($model->title) ?>&url=<?= Url::current([], true) ?>"
+           target="_blank" class="btn btn-primary btn-sm" style="background-color: #1da1f2; border: none;">
+            Twitter
+        </a>
+    </div>
+    <hr>
     <div class="comments-section mt-5">
 
         <h3>Коментарі (<?= count($model->comments) ?>)</h3>
