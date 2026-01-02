@@ -8,76 +8,69 @@ use Yii;
  * This is the model class for table "comment".
  *
  * @property int $id
- * @property string|null $text
+ * @property string $text
  * @property int|null $user_id
- * @property int|null $article_id
+ * @property int|null $post_id
+ * @property int|null $parent_id
  * @property int|null $status
  * @property string|null $date
  *
- * @property Post $article
+ * @property Post $post
  * @property User $user
  */
 class Comment extends \yii\db\ActiveRecord
 {
-
-
-    /**
-     * {@inheritdoc}
-     */
     public static function tableName()
     {
         return 'comment';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function rules()
     {
         return [
-            [['text', 'user_id', 'article_id', 'date'], 'default', 'value' => null],
-            [['status'], 'default', 'value' => 0],
-            [['user_id', 'article_id', 'status'], 'integer'],
+            [['text'], 'required'],
+            [['text'], 'string'],
+            [['user_id', 'post_id', 'parent_id', 'status'], 'integer'],
             [['date'], 'safe'],
-            [['text'], 'string', 'max' => 255],
-            [['article_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::class, 'targetAttribute' => ['article_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
+            [['post_id'], 'exist', 'skipOnError' => true, 'targetClass' => Post::class, 'targetAttribute' => ['post_id' => 'id']],
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attributeLabels()
     {
         return [
             'id' => 'ID',
-            'text' => 'Text',
+            'text' => 'Коментар',
             'user_id' => 'User ID',
-            'article_id' => 'Article ID',
+            'post_id' => 'Post ID',
+            'parent_id' => 'Parent ID',
             'status' => 'Status',
             'date' => 'Date',
         ];
     }
 
-    /**
-     * Gets query for [[Article]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getArticle()
+
+    public function getPost()
     {
-        return $this->hasOne(Post::class, ['id' => 'article_id']);
+        return $this->hasOne(Post::class, ['id' => 'post_id']);
     }
 
-    /**
-     * Gets query for [[User]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
+
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
+                $this->date = date('Y-m-d');
+            }
+            return true;
+        }
+        return false;
+    }
 }

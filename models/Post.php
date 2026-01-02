@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use app\models\Comment;
 
 /**
  * This is the model class for table "post".
@@ -28,6 +29,7 @@ class Post extends \yii\db\ActiveRecord
 
     public $imageFile;
     public $tagsInput;
+
     /**
      * {@inheritdoc}
      */
@@ -86,16 +88,6 @@ class Post extends \yii\db\ActiveRecord
     }
 
     /**
-     * Gets query for [[Comments]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getComments()
-    {
-        return $this->hasMany(Comment::class, ['article_id' => 'id']);
-    }
-
-    /**
      * Gets query for [[PostTags]].
      *
      * @return \yii\db\ActiveQuery
@@ -115,26 +107,31 @@ class Post extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+
     public function getTags()
     {
         return $this->hasMany(Tag::class, ['id' => 'tag_id'])
             ->viaTable('post_tag', ['post_id' => 'id']);
     }
+
+
+    public function getComments()
+    {
+        return $this->hasMany(Comment::class, ['post_id' => 'id']);
+    }
+
+
     public function afterSave($insert, $changedAttributes)
     {
         parent::afterSave($insert, $changedAttributes);
 
-
         if ($this->tagsInput) {
-
             $this->unlinkAll('tags', true);
-
             $tagsArray = explode(',', $this->tagsInput);
 
             foreach ($tagsArray as $tagName) {
                 $tagName = trim($tagName);
                 if (empty($tagName)) continue;
-
 
                 $tag = Tag::findOne(['title' => $tagName]);
                 if (!$tag) {

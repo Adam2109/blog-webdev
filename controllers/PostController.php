@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use Yii;
 use app\models\Post;
 use app\models\PostSearch;
 use yii\web\Controller;
@@ -57,29 +58,32 @@ class PostController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-        $model->updateCounters(['viewed' => 1]);
+
+
         $commentForm = new Comment();
 
-        if ($commentForm->load($this->request->post())) {
-            $commentForm->article_id = $model->id;
-            $commentForm->date = date('Y-m-d');
-            $commentForm->status = 1;
+        if ($commentForm->load(Yii::$app->request->post())) {
 
-
-            if (!\Yii::$app->user->isGuest) {
-                $commentForm->user_id = \Yii::$app->user->id;
+            if (Yii::$app->user->isGuest) {
+                Yii::$app->session->setFlash('error', 'Щоб коментувати, увійдіть у систему.');
+                return $this->refresh();
             }
 
-            if ($commentForm->save()) {
+            $commentForm->user_id = Yii::$app->user->id;
+            $commentForm->post_id = $id;
+            $commentForm->status = 1;
 
-                \Yii::$app->session->setFlash('success', 'Коментар додано!');
+            if ($commentForm->save()) {
+                Yii::$app->session->setFlash('success', 'Коментар додано!');
                 return $this->refresh();
             }
         }
 
+        $model->updateCounters(['viewed' => 1]);
+
         return $this->render('view', [
             'model' => $model,
-            'commentForm' => $commentForm, // Передаємо форму у вид
+            'commentForm' => $commentForm,
         ]);
     }
 
