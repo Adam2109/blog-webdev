@@ -26,7 +26,7 @@ use Yii;
 class Post extends \yii\db\ActiveRecord
 {
 
-
+    public $imageFile;
     /**
      * {@inheritdoc}
      */
@@ -48,6 +48,7 @@ class Post extends \yii\db\ActiveRecord
             [['date'], 'safe'],
             [['viewed', 'user_id', 'status', 'category_id'], 'integer'],
             [['title', 'image'], 'string', 'max' => 255],
+            [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::class, 'targetAttribute' => ['category_id' => 'id']],
             [['user_id'], 'exist', 'skipOnError' => true, 'targetClass' => User::class, 'targetAttribute' => ['user_id' => 'id']],
         ];

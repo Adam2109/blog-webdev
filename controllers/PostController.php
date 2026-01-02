@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Comment;
+use yii\web\UploadedFile;
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -92,8 +93,34 @@ class PostController extends Controller
         $model = new Post();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+
+                // 1. Отримуємо файл
+                $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+
+                // 2. Якщо файл завантажено
+                if ($model->imageFile) {
+
+                    $uid = md5(uniqid(rand(), true));
+                    $fileName = $uid . '.' . $model->imageFile->extension;
+
+
+                    $uploadPath = \Yii::getAlias('@webroot/uploads/');
+                    if (!file_exists($uploadPath)) {
+                        mkdir($uploadPath, 0777, true);
+                    }
+
+
+                    $model->imageFile->saveAs($uploadPath . $fileName);
+
+
+                    $model->image = $fileName;
+                }
+
+
+                if ($model->save(false)) {
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
             }
         } else {
             $model->loadDefaultValues();

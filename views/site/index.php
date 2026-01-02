@@ -15,6 +15,14 @@ $this->title = 'Мій IT Блог';
             <div class="col-md-9">
                 <?php foreach ($posts as $post): ?>
                     <div class="post-item" style="margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 20px;">
+                        <?php if ($post->image): ?>
+                            <div class="post-image" style="margin-bottom: 15px;">
+                                <img src="<?= Yii::getAlias('@web/uploads/') . $post->image ?>"
+                                     alt="<?= $post->title ?>"
+                                     class="img-fluid"
+                                     style="max-height: 300px; width: 100%; object-fit: cover;">
+                            </div>
+                        <?php endif; ?>
                         <h2>
                             <a href="<?= Url::to(['post/view', 'id' => $post->id]) ?>">
                                 <?= $post->title ?>

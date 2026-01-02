@@ -12,7 +12,7 @@ use yii\helpers\ArrayHelper;
 
 <div class="post-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
@@ -20,7 +20,7 @@ use yii\helpers\ArrayHelper;
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'date')->textInput(['type' => 'date']) ?> <?= $form->field($model, 'image')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'date')->textInput(['type' => 'date']) ?> <?= $form->field($model, 'imageFile')->fileInput() ?>
 
     <?php // echo $form->field($model, 'viewed')->textInput() ?>
 

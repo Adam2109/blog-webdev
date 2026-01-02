@@ -15,7 +15,14 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="post-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    <?php if ($model->image): ?>
+        <div class="mb-4 text-center">
+            <img src="<?= Yii::getAlias('@web/uploads/') . $model->image ?>"
+                 class="img-fluid rounded"
+                 alt="<?= Html::encode($model->title) ?>"
+                 style="max-width: 100%; height: auto;">
+        </div>
+    <?php endif; ?>
     <p class="text-muted">
         <small>
             Дата: <?= Yii::$app->formatter->asDate($model->date, 'long') ?> |
