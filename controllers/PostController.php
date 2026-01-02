@@ -7,7 +7,7 @@ use app\models\PostSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-
+use app\models\Comment;
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -55,8 +55,30 @@ class PostController extends Controller
      */
     public function actionView($id)
     {
+        $model = $this->findModel($id);
+
+        $commentForm = new Comment();
+
+        if ($commentForm->load($this->request->post())) {
+            $commentForm->article_id = $model->id;
+            $commentForm->date = date('Y-m-d');
+            $commentForm->status = 1;
+
+
+            if (!\Yii::$app->user->isGuest) {
+                $commentForm->user_id = \Yii::$app->user->id;
+            }
+
+            if ($commentForm->save()) {
+
+                \Yii::$app->session->setFlash('success', 'Коментар додано!');
+                return $this->refresh();
+            }
+        }
+
         return $this->render('view', [
-            'model' => $this->findModel($id),
+            'model' => $model,
+            'commentForm' => $commentForm, // Передаємо форму у вид
         ]);
     }
 
