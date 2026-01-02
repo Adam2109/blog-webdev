@@ -12,6 +12,8 @@ use app\models\ContactForm;
 use app\models\Post;
 use yii\data\Pagination;
 use app\models\Category;
+use app\models\SignupForm;
+
 class SiteController extends Controller
 {
     /**
@@ -56,11 +58,6 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex($category_id = null, $search = null, $tag = null)
     {
         $query = Post::find()->where(['status' => 1]);
@@ -77,10 +74,8 @@ class SiteController extends Controller
         }
 
         if ($tag) {
-            // Приєднуємо таблицю тегів і шукаємо по назві
             $query->joinWith('tags')->andWhere(['tag.title' => $tag]);
         }
-
 
         $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
 
@@ -98,11 +93,6 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Login action.
-     *
-     * @return Response|string
-     */
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -120,11 +110,25 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Logout action.
-     *
-     * @return Response
-     */
+
+    public function actionSignup()
+    {
+        $model = new SignupForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->getUser()->login($user)) {
+                    return $this->goHome();
+                }
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
+    }
+
+
     public function actionLogout()
     {
         Yii::$app->user->logout();
@@ -132,11 +136,6 @@ class SiteController extends Controller
         return $this->goHome();
     }
 
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
     public function actionContact()
     {
         $model = new ContactForm();
@@ -150,11 +149,6 @@ class SiteController extends Controller
         ]);
     }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
     public function actionAbout()
     {
         return $this->render('about');
