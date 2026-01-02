@@ -56,7 +56,9 @@ $this->title = 'IT Блог - Головна';
                                 <?php if($post->tags): ?>
                                     <div>
                                         <?php foreach(array_slice($post->tags, 0, 3) as $tag): ?>
-                                            <span class="badge bg-secondary"><?= Html::encode($tag->title) ?></span>
+                                            <a href="<?= Url::to(['site/index', 'tag' => $tag->title]) ?>" class="badge bg-secondary text-decoration-none">
+                                                <?= Html::encode($tag->title) ?>
+                                            </a>
                                         <?php endforeach; ?>
                                     </div>
                                 <?php endif; ?>

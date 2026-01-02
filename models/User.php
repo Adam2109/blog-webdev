@@ -5,7 +5,8 @@ namespace app\models;
 use Yii;
 use yii\db\ActiveRecord;
 use yii\web\IdentityInterface;
-
+use app\models\Post;
+use app\models\Comment;
 class User extends ActiveRecord implements IdentityInterface
 {
 
@@ -54,6 +55,11 @@ class User extends ActiveRecord implements IdentityInterface
     public function getComments()
     {
         return $this->hasMany(Comment::class, ['user_id' => 'id']);
+    }
+
+    public function getPosts()
+    {
+        return $this->hasMany(Post::class, ['user_id' => 'id']);
     }
     public function isAdmin()
     {

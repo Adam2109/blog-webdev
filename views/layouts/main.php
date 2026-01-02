@@ -41,8 +41,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
         $menuItems = [
                 ['label' => 'Головна', 'url' => ['/site/index']],
-                ['label' => 'Про нас', 'url' => ['/site/about']],
-                ['label' => 'Контакти', 'url' => ['/site/contact']],
+                ['label' => 'Про автора', 'url' => ['/site/about']],
         ];
 
         if (Yii::$app->user->isGuest) {
