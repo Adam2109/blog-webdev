@@ -10,6 +10,7 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use app\models\Comment;
 use yii\web\UploadedFile;
+use yii\filters\AccessControl;
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -23,6 +24,17 @@ class PostController extends Controller
         return array_merge(
             parent::behaviors(),
             [
+                'access' => [
+                    'class' => AccessControl::class,
+                    'only' => ['create', 'update', 'delete'],
+                    'rules' => [
+                        [
+                            'actions' => ['create', 'update', 'delete'],
+                            'allow' => true,
+                            'roles' => ['@'],
+                        ],
+                    ],
+                ],
                 'verbs' => [
                     'class' => VerbFilter::className(),
                     'actions' => [
@@ -99,10 +111,11 @@ class PostController extends Controller
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
 
-                // 1. Отримуємо файл
+                $model->user_id = Yii::$app->user->id;
+
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
 
-                // 2. Якщо файл завантажено
+
                 if ($model->imageFile) {
 
                     $uid = md5(uniqid(rand(), true));
@@ -145,24 +158,20 @@ class PostController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        if ($model->user_id !== Yii::$app->user->id) {
+            throw new \yii\web\ForbiddenHttpException('Ви не маєте прав редагувати цю статтю.');
+        }
         $oldImage = $model->image;
 
         if ($this->request->isPost && $model->load($this->request->post())) {
 
             $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
-
             if ($model->imageFile) {
-
                 $uid = md5(uniqid(rand(), true));
                 $fileName = $uid . '.' . $model->imageFile->extension;
-                $uploadPath = \Yii::getAlias('@webroot/uploads/');
-
-                $model->imageFile->saveAs($uploadPath . $fileName);
-
+                $model->imageFile->saveAs(Yii::getAlias('@webroot/uploads/') . $fileName);
                 $model->image = $fileName;
             } else {
-
                 $model->image = $oldImage;
             }
 
@@ -185,10 +194,16 @@ class PostController extends Controller
      */
     public function actionDelete($id)
     {
+        $model = $this->findModel($id);
         $this->findModel($id)->delete();
+        if ($model->user_id !== Yii::$app->user->id) {
+            throw new \yii\web\ForbiddenHttpException('Ви не маєте прав видаляти цю статтю.');
+        }
+            $model->delete();
 
-        return $this->redirect(['index']);
+            return $this->redirect(['index']);
     }
+
 
     /**
      * Finds the Post model based on its primary key value.
