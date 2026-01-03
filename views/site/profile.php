@@ -57,15 +57,39 @@ $this->params['breadcrumbs'][] = $this->title;
                             + Створити
                         </a>
                     </div>
-                    <div class="list-group list-group-flush">
-                        <?php if (!empty($model->posts)): ?>
-                            <?php foreach ($model->posts as $post): ?>
-                                <a href="<?= Url::to(['post/view', 'id' => $post->id]) ?>" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                                    <?= Html::encode($post->title) ?>
-                                    <span class="badge bg-secondary rounded-pill" title="Переглядів">
-                                        <i class="bi bi-eye"></i> <?= $post->viewed ?>
-                                    </span>
-                                </a>
+
+                    <div class="card-body bg-light"> <?php if (!empty($model->posts)): ?>
+                            <?php foreach (array_reverse($model->posts) as $post): ?> <div class="card mb-3 shadow-sm" style="<?= $post->status == 0 ? 'opacity: 0.85; border: 1px dashed #777;' : '' ?>">
+                                <div class="card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+
+                                        <h5 class="card-title m-0">
+                                            <a href="<?= Url::to(['post/view', 'id' => $post->id]) ?>" class="text-decoration-none text-dark fw-bold">
+                                                <?= Html::encode($post->title) ?>
+                                            </a>
+                                        </h5>
+
+                                        <div class="d-flex align-items-center">
+                                            <?php if ($post->status == 1): ?>
+                                                <span class="badge bg-success me-2">Опубліковано</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-warning text-dark me-2">
+                                                        <i class="bi bi-pencil-square"></i> Чернетка
+                                                    </span>
+                                            <?php endif; ?>
+
+                                            <span class="badge bg-secondary rounded-pill" title="Переглядів">
+                                                    <i class="bi bi-eye"></i> <?= $post->viewed ?>
+                                                </span>
+                                        </div>
+
+                                    </div>
+                                    <div class="mt-2 text-muted small">
+                                        <i class="bi bi-calendar"></i> <?= Yii::$app->formatter->asDate($post->date, 'medium') ?>
+                                    </div>
+                                </div>
+                            </div>
+
                             <?php endforeach; ?>
                         <?php else: ?>
                             <div class="p-3 text-muted text-center">Ви ще не написали жодної статті.</div>
@@ -73,7 +97,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     </div>
                 </div>
             <?php endif; ?>
-
 
             <div class="card shadow-sm">
                 <div class="card-header bg-secondary text-white">

@@ -62,7 +62,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?php endif; ?>
 
         <div class="post-content" style="font-size: 1.1em; line-height: 1.6; margin-bottom: 30px;">
-            <?= nl2br(Html::encode($model->content)) ?>
+            <?= $model->content ?>
         </div>
 
         <hr>
