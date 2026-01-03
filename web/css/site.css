@@ -87,9 +87,7 @@ a.desc:after {
     margin-bottom: 1rem;
 }
 
-/* =========================================
-   DARK THEME + NEON GLOW (Фінальна версія)
-   ========================================= */
+
 
 /* 1. Основний фон і текст */
 body {
@@ -101,7 +99,7 @@ body {
 .card {
     background-color: #1e1e1e;
     border: 1px solid #333;
-    color: #e0e0e0; /* <--- ВАЖЛИВО: Задає колір для всього тексту всередині */
+    color: #e0e0e0;
 }
 
 .card-header {
@@ -178,7 +176,7 @@ pre, code {
     border: 1px solid #333;
 }
 
-/* 9. Text muted (дати, перегляди) */
+/* 9. Text muted  */
 .text-muted {
     color: #b0b0b0 !important;
 }
@@ -210,27 +208,26 @@ pre, code {
     border-top: 1px solid #333 !important;
 }
 
-/* === 14. ВИПРАВЛЕННЯ ДЛЯ ПРОФІЛЮ ТА "ПРО АВТОРА" (ВАЖЛИВО) === */
+
 
 /* Заголовки (H1-H6) робимо білими */
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: #f8fafc !important;
 }
 
-/* Клас text-secondary (Університет) робимо світлим */
 .text-secondary {
     color: #adb5bd !important; /* Світло-сірий */
 }
 
-/* Списки (ul li) всередині карток робимо світлими */
+/* Списки  всередині карток робимо світлими */
 .card ul li {
     color: #e0e0e0;
 }
 .card-body {
-    color: #e0e0e0; /* Підстраховка для всього тексту в блоці */
+    color: #e0e0e0;
 }
 /* === END THEME === */
-/* === FLASH MESSAGES (Стильні повідомлення) === */
+/* === FLASH MESSAGES  === */
 .alert {
     background-color: #1e1e1e !important; /* Темний фон */
     border: none;
@@ -241,7 +238,6 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     padding-right: 40px; /* Місце для хрестика закриття */
 }
 
-/* Успіх (Зелений акцент) */
 .alert-success {
     border-left-color: #28a745 !important;
     /* Легкий градієнт для об'єму */
@@ -260,17 +256,56 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     background: linear-gradient(90deg, rgba(23, 162, 184, 0.1), transparent) !important;
 }
 
-/* Попередження (Жовтий акцент) */
 .alert-warning {
     border-left-color: #ffc107 !important;
     background: linear-gradient(90deg, rgba(255, 193, 7, 0.1), transparent) !important;
 }
 
-/* Виправлення хрестика (закриття) для темної теми */
 .alert .btn-close, .alert .close {
-    filter: invert(1); /* Робить чорний хрестик білим */
+    filter: invert(1);
     opacity: 0.8;
 }
 .alert .btn-close:hover, .alert .close:hover {
     opacity: 1;
 }
+
+
+
+/* 1. Скидаємо стилі темної картки для редактора */
+.note-editor.card {
+    background-color: #ffffff !important; /* Примусово білий фон */
+    border: 1px solid #ced4da !important;
+    box-shadow: none !important;
+}
+
+/* 2. Робимо поле вводу білим, а текст чорним */
+.note-editor .note-editing-area .note-editable {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+}
+
+/* 3. Верхня панель інструментів */
+.note-toolbar {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #ced4da !important;
+    color: #333 !important;
+}
+
+/* 4. Колір кнопок в панелі */
+.note-btn {
+    background-color: #fff !important;
+    color: #333 !important;
+    border: 1px solid #ced4da !important;
+}
+
+/* 5. Колір підказки (Placeholder) */
+.note-placeholder {
+    color: #888 !important;
+}
+
+/* 6. Статус бар знизу */
+.note-statusbar {
+    background-color: #f1f1f1 !important;
+}
+
+

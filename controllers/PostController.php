@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use yii\filters\AccessControl;
 use app\models\Like;
 use yii\web\Response;
+
 /**
  * PostController implements the CRUD actions for Post model.
  */
@@ -28,16 +29,12 @@ class PostController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'update', 'delete'],
+                    'only' => ['create', 'update', 'delete', 'delete-comment'], // Додали delete-comment до контролю
                     'rules' => [
                         [
-                            'actions' => ['create', 'update', 'delete'],
+                            'actions' => ['create', 'update', 'delete', 'delete-comment'],
                             'allow' => true,
-                            'roles' => ['@'],
-                            'matchCallback' => function ($rule, $action) {
-
-                                return Yii::$app->user->identity->isAdmin();
-                            }
+                            'roles' => ['@'], // Тільки авторизовані
                         ],
                     ],
                 ],
@@ -45,6 +42,7 @@ class PostController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'delete-comment' => ['POST'],
                     ],
                 ],
             ]
@@ -53,7 +51,6 @@ class PostController extends Controller
 
     /**
      * Lists all Post models.
-     *
      * @return string
      */
     public function actionIndex()
@@ -76,8 +73,6 @@ class PostController extends Controller
     public function actionView($id)
     {
         $model = $this->findModel($id);
-
-
         $commentForm = new Comment();
 
         if ($commentForm->load(Yii::$app->request->post())) {
@@ -89,14 +84,15 @@ class PostController extends Controller
 
             $commentForm->user_id = Yii::$app->user->id;
             $commentForm->post_id = $id;
-            $commentForm->status = 1;
+            // $commentForm->status = 1; // Якщо у вас є колонка status, розкоментуйте
 
             if ($commentForm->save()) {
                 Yii::$app->session->setFlash('success', 'Коментар додано!');
-                return $this->refresh();
+                return $this->refresh(); // Перезавантаження сторінки, щоб очистити форму
             }
         }
 
+        // Лічильник переглядів
         $model->updateCounters(['viewed' => 1]);
 
         return $this->render('view', [
@@ -107,39 +103,34 @@ class PostController extends Controller
 
     /**
      * Creates a new Post model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
+        // Перевірка: створювати може тільки адмін (якщо така логіка потрібна)
+        if (!Yii::$app->user->identity->isAdmin()) {
+            throw new \yii\web\ForbiddenHttpException('Тільки адміністратор може створювати статті.');
+        }
+
         $model = new Post();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post())) {
 
                 $model->user_id = Yii::$app->user->id;
-
                 $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
 
-
                 if ($model->imageFile) {
-
                     $uid = md5(uniqid(rand(), true));
                     $fileName = $uid . '.' . $model->imageFile->extension;
-
 
                     $uploadPath = \Yii::getAlias('@webroot/uploads/');
                     if (!file_exists($uploadPath)) {
                         mkdir($uploadPath, 0777, true);
                     }
 
-
                     $model->imageFile->saveAs($uploadPath . $fileName);
-
-
                     $model->image = $fileName;
                 }
-
 
                 if ($model->save(false)) {
                     return $this->redirect(['view', 'id' => $model->id]);
@@ -156,17 +147,16 @@ class PostController extends Controller
 
     /**
      * Updates an existing Post model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param int $id ID
-     * @return string|\yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
      */
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        if ($model->user_id !== Yii::$app->user->id) {
+
+        // Перевірка: Редагувати може Адмін АБО Автор
+        if (!Yii::$app->user->identity->isAdmin() && $model->user_id !== Yii::$app->user->id) {
             throw new \yii\web\ForbiddenHttpException('Ви не маєте прав редагувати цю статтю.');
         }
+
         $oldImage = $model->image;
 
         if ($this->request->isPost && $model->load($this->request->post())) {
@@ -193,40 +183,29 @@ class PostController extends Controller
 
     /**
      * Deletes an existing Post model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param int $id ID
-     * @return \yii\web\Response
-     * @throws NotFoundHttpException if the model cannot be found
+     * ВИПРАВЛЕНО: Перевірка прав та перенаправлення.
      */
     public function actionDelete($id)
     {
         $model = $this->findModel($id);
-        $this->findModel($id)->delete();
-        if ($model->user_id !== Yii::$app->user->id) {
+
+        if (!Yii::$app->user->isGuest &&
+            (Yii::$app->user->identity->isAdmin() || $model->user_id == Yii::$app->user->id)) {
+
+
+            $model->delete();
+            Yii::$app->session->setFlash('success', 'Статтю успішно видалено!');
+
+        } else {
             throw new \yii\web\ForbiddenHttpException('Ви не маєте прав видаляти цю статтю.');
         }
-            $model->delete();
 
-            return $this->redirect(['index']);
+        return $this->redirect(['site/index']);
     }
-
 
     /**
-     * Finds the Post model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param int $id ID
-     * @return Post the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
+     * Лайки (AJAX)
      */
-    protected function findModel($id)
-    {
-        if (($model = Post::findOne(['id' => $id])) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
     public function actionLike($id)
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
@@ -239,18 +218,15 @@ class PostController extends Controller
         $like = Like::findOne(['post_id' => $id, 'user_id' => $userId]);
 
         if ($like) {
-
             $like->delete();
             $isLiked = false;
         } else {
-
             $like = new Like();
             $like->post_id = $id;
             $like->user_id = $userId;
             $like->save();
             $isLiked = true;
         }
-
 
         $count = Like::find()->where(['post_id' => $id])->count();
 
@@ -260,6 +236,7 @@ class PostController extends Controller
             'isLiked' => $isLiked,
         ];
     }
+
     /**
      * Видалення коментаря
      */
@@ -267,13 +244,28 @@ class PostController extends Controller
     {
         $comment = Comment::findOne($id);
 
+
         if ($comment && !Yii::$app->user->isGuest &&
             (Yii::$app->user->id == $comment->user_id || Yii::$app->user->identity->isAdmin())) {
 
-            $comment->delete();
+            $comment->delete(); // Видаляємо (разом з відповідями через beforeDelete в моделі)
             Yii::$app->session->setFlash('success', 'Коментар видалено.');
+        } else {
+            Yii::$app->session->setFlash('error', 'Помилка видалення коментаря.');
         }
 
         return $this->redirect(Yii::$app->request->referrer ?: ['site/index']);
+    }
+
+    /**
+     * Finds the Post model based on its primary key value.
+     */
+    protected function findModel($id)
+    {
+        if (($model = Post::findOne(['id' => $id])) !== null) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 }
