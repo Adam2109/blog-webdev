@@ -58,7 +58,7 @@ class SiteController extends Controller
         ];
     }
 
-    public function actionIndex($category_id = null, $search = null, $tag = null)
+    public function actionIndex($category_id = null, $search = null, $tag = null, $sort = 'new')
     {
         $query = Post::find()->where(['status' => 1]);
 
@@ -76,12 +76,31 @@ class SiteController extends Controller
         if ($tag) {
             $query->joinWith('tags')->andWhere(['tag.title' => $tag]);
         }
+        switch ($sort) {
+            case 'popular':
 
-        $pages = new Pagination(['totalCount' => $query->count(), 'pageSize' => 3]);
+                $query->orderBy(['viewed' => SORT_DESC]);
+                break;
+            case 'old':
+
+                $query->orderBy(['date' => SORT_ASC]);
+                break;
+            case 'new':
+            default:
+
+                $query->orderBy(['date' => SORT_DESC, 'id' => SORT_DESC]);
+                break;
+        }
+
+        $pages = new Pagination([
+            'totalCount' => $query->count(),
+            'pageSize' => 3,
+            'forcePageParam' => false,
+            'pageSizeParam' => false
+        ]);
 
         $posts = $query->offset($pages->offset)
             ->limit($pages->limit)
-            ->orderBy(['post.id' => SORT_DESC])
             ->all();
 
         $categories = Category::find()->all();
@@ -90,6 +109,7 @@ class SiteController extends Controller
             'posts' => $posts,
             'pages' => $pages,
             'categories' => $categories,
+            'sort' => $sort,
         ]);
     }
 

@@ -18,7 +18,49 @@ $this->title = 'IT Блог - Головна';
         <div class="col-md-8">
             <h1 class="mb-4">Останні публікації</h1>
 
+            <div class="d-flex justify-content-end mb-3">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-sort-down"></i> Сортувати:
+                        <b>
+                            <?php
+                            // ВИПРАВЛЕННЯ: Використовуємо масив замість match для сумісності зі старим PHP
+                            $sortLabels = [
+                                    'popular' => 'Популярні',
+                                    'old' => 'Старіші',
+                                    'new' => 'Новіші',
+                            ];
+                            // Виводимо текст або 'Новіші' за замовчуванням
+                            echo $sortLabels[$sort ?? 'new'] ?? 'Новіші';
+                            ?>
+                        </b>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="sortDropdown">
+                        <li>
+                            <a class="dropdown-item <?= ($sort ?? 'new') == 'new' ? 'active' : '' ?>"
+                               href="<?= \yii\helpers\Url::current(['sort' => 'new']) ?>">
+                                Спочатку новіші
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?= ($sort ?? '') == 'old' ? 'active' : '' ?>"
+                               href="<?= \yii\helpers\Url::current(['sort' => 'old']) ?>">
+                                Спочатку старіші
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?= ($sort ?? '') == 'popular' ? 'active' : '' ?>"
+                               href="<?= \yii\helpers\Url::current(['sort' => 'popular']) ?>">
+                                Популярні
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <hr>
+
             <?php if (!empty($posts)): ?>
+
                 <?php foreach ($posts as $post): ?>
                     <article class="card mb-4 shadow-sm">
                         <?php if ($post->image): ?>
