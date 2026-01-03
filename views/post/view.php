@@ -91,7 +91,51 @@ $this->params['breadcrumbs'][] = $this->title;
                 </a>
             </div>
         </div>
+        <?php if (!empty($relatedPosts)): ?>
+            <div class="related-posts mt-5 mb-5">
+                <h4 class="mb-4 border-bottom pb-2 text-white">Читайте також по темі:</h4>
+                <div class="row">
+                    <?php foreach ($relatedPosts as $relPost): ?>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 shadow-sm" style="background-color: #2c2c2c; border: 1px solid #444;">
 
+                                <a href="<?= Url::to(['post/view', 'id' => $relPost->id]) ?>">
+                                    <?php if ($relPost->image): ?>
+                                        <img src="<?= Yii::getAlias('@web/uploads/') . $relPost->image ?>"
+                                             class="card-img-top"
+                                             alt="<?= Html::encode($relPost->title) ?>"
+                                             style="height: 160px; object-fit: cover;">
+                                    <?php else: ?>
+                                        <div class="card-img-top d-flex align-items-center justify-content-center"
+                                             style="height: 160px; background-color: #3a3a3a;">
+                                            <i class="bi bi-image text-muted display-4"></i>
+                                        </div>
+                                    <?php endif; ?>
+                                </a>
+
+                                <div class="card-body">
+                                    <h6 class="card-title" style="min-height: 40px;">
+                                        <a href="<?= Url::to(['post/view', 'id' => $relPost->id]) ?>"
+                                           class="text-decoration-none text-info fw-bold">
+                                            <?= Html::encode($relPost->title) ?>
+                                        </a>
+                                    </h6>
+
+                                    <div class="text-muted small mb-2">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        <?= Yii::$app->formatter->asDate($relPost->date, 'medium') ?>
+                                    </div>
+
+                                    <p class="card-text small text-secondary">
+                                        <?= \yii\helpers\StringHelper::truncate(strip_tags($relPost->description), 60) ?>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        <?php endif; ?>
         <div class="comments-section bg-dark-custom p-4 rounded">
             <h3>Коментарі (<?= count($model->comments) ?>)</h3>
             <hr>

@@ -13,6 +13,7 @@ use yii\web\UploadedFile;
 use yii\filters\AccessControl;
 use app\models\Like;
 use yii\web\Response;
+use yii\helpers\ArrayHelper;
 
 /**
  * PostController implements the CRUD actions for Post model.
@@ -76,20 +77,54 @@ class PostController extends Controller
         $commentForm = new Comment();
 
         if ($commentForm->load(Yii::$app->request->post())) {
-
             if (Yii::$app->user->isGuest) {
                 Yii::$app->session->setFlash('error', 'Щоб коментувати, увійдіть у систему.');
                 return $this->refresh();
             }
-
             $commentForm->user_id = Yii::$app->user->id;
             $commentForm->post_id = $id;
-            // $commentForm->status = 1; // Якщо у вас є колонка status, розкоментуйте
 
             if ($commentForm->save()) {
                 Yii::$app->session->setFlash('success', 'Коментар додано!');
-                return $this->refresh(); // Перезавантаження сторінки, щоб очистити форму
+                return $this->refresh();
             }
+        }
+
+
+
+        // Отримуємо ID всіх тегів поточної статті
+        $currentTagIds = ArrayHelper::getColumn($model->tags, 'id');
+        $relatedPosts = [];
+
+        if (!empty($currentTagIds)) {
+            $relatedPosts = Post::find()
+                ->joinWith('tags')
+                ->where(['in', 'tag.id', $currentTagIds])
+                ->andWhere(['!=', 'post.id', $id])
+                ->andWhere(['status' => 1])
+                ->distinct()
+                ->limit(3)
+                ->all();
+        }
+
+
+        if (count($relatedPosts) < 3) {
+            $needed = 3 - count($relatedPosts);
+
+
+            $excludeIds = ArrayHelper::getColumn($relatedPosts, 'id');
+            $excludeIds[] = $id;
+
+            $morePosts = Post::find()
+                ->where(['category_id' => $model->category_id])
+                ->andWhere(['not in', 'id', $excludeIds])
+                ->andWhere(['status' => 1])
+                ->limit($needed)
+                ->orderBy(['id' => SORT_DESC])
+                ->all();
+
+
+            $relatedPosts = array_merge($relatedPosts, $morePosts);
         }
 
         // Лічильник переглядів
@@ -98,6 +133,7 @@ class PostController extends Controller
         return $this->render('view', [
             'model' => $model,
             'commentForm' => $commentForm,
+            'relatedPosts' => $relatedPosts,
         ]);
     }
 
@@ -106,7 +142,7 @@ class PostController extends Controller
      */
     public function actionCreate()
     {
-        // Перевірка: створювати може тільки адмін (якщо така логіка потрібна)
+
         if (!Yii::$app->user->identity->isAdmin()) {
             throw new \yii\web\ForbiddenHttpException('Тільки адміністратор може створювати статті.');
         }
