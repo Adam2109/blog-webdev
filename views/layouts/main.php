@@ -79,6 +79,14 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         ]);
 
         NavBar::end();
+        $js = <<<JS
+        setTimeout(function() {
+            $('.alert').fadeOut('slow', function() {
+                $(this).remove();
+            });
+        }, 3000); // 3000 мс = 3 секунди
+    JS;
+        $this->registerJs($js);
         ?>
     </header>
 

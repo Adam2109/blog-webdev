@@ -260,4 +260,20 @@ class PostController extends Controller
             'isLiked' => $isLiked,
         ];
     }
+    /**
+     * Видалення коментаря
+     */
+    public function actionDeleteComment($id)
+    {
+        $comment = Comment::findOne($id);
+
+        if ($comment && !Yii::$app->user->isGuest &&
+            (Yii::$app->user->id == $comment->user_id || Yii::$app->user->identity->isAdmin())) {
+
+            $comment->delete();
+            Yii::$app->session->setFlash('success', 'Коментар видалено.');
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?: ['site/index']);
+    }
 }

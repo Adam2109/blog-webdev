@@ -107,8 +107,20 @@ $this->params['breadcrumbs'][] = $this->title;
                                         <small class="text-muted" style="font-size: 0.8em;">(відповідь)</small>
                                     <?php endif; ?>
                                 </h5>
+
                                 <small class="text-muted">
                                     <?= Yii::$app->formatter->asDate($comment->date, 'medium') ?>
+
+                                    <?php if (!Yii::$app->user->isGuest && ($comment->user && Yii::$app->user->id == $comment->user->id || Yii::$app->user->identity->isAdmin())): ?>
+                                        <?= Html::a('<i class="bi bi-trash"></i>', ['post/delete-comment', 'id' => $comment->id], [
+                                                'class' => 'text-danger ms-2 text-decoration-none',
+                                                'title' => 'Видалити коментар',
+                                                'data' => [
+                                                        'confirm' => 'Ви впевнені? Це також видалить усі відповіді на цей коментар.',
+                                                        'method' => 'post',
+                                                ],
+                                        ]) ?>
+                                    <?php endif; ?>
                                 </small>
                             </div>
                             <p class="card-text">

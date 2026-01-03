@@ -49,19 +49,16 @@ class User extends ActiveRecord implements IdentityInterface
 
     public function upload()
     {
-        if ($this->validate()) {
-            if ($this->imageFile) {
 
-                $fileName = 'user_' . $this->id . '_' . time() . '.' . $this->imageFile->extension;
+        if ($this->imageFile) {
+            $fileName = 'user_' . $this->id . '_' . time() . '.' . $this->imageFile->extension;
 
-                $this->imageFile->saveAs(Yii::getAlias('@webroot/uploads/') . $fileName);
+            $this->imageFile->saveAs(Yii::getAlias('@webroot/uploads/') . $fileName);
 
-                $this->image = $fileName;
-            }
+            $this->image = $fileName;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
 

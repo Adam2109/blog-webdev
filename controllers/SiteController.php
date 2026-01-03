@@ -170,20 +170,23 @@ class SiteController extends Controller
             return $this->goHome();
         }
 
-        $model = Yii::$app->user->identity; // Беремо поточного юзера
+        $model = Yii::$app->user->identity;
 
-        // Якщо форму відправлено
         if ($model->load(Yii::$app->request->post())) {
 
-            // Завантажуємо файл
+
             $model->imageFile = \yii\web\UploadedFile::getInstance($model, 'imageFile');
 
-            // Якщо файл є - завантажуємо, якщо ні - просто зберігаємо текст
-            if ($model->imageFile) {
-                $model->upload();
-            }
 
-            if ($model->save()) {
+            if ($model->validate()) {
+
+                if ($model->imageFile) {
+                    $model->upload();
+                }
+
+
+                $model->save(false);
+
                 Yii::$app->session->setFlash('success', 'Профіль успішно оновлено!');
                 return $this->redirect(['site/profile']);
             }

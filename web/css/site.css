@@ -230,3 +230,47 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
     color: #e0e0e0; /* Підстраховка для всього тексту в блоці */
 }
 /* === END THEME === */
+/* === FLASH MESSAGES (Стильні повідомлення) === */
+.alert {
+    background-color: #1e1e1e !important; /* Темний фон */
+    border: none;
+    border-left: 5px solid #333; /* Кольорова смужка зліва */
+    color: #fff; /* Білий текст */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); /* Глибока тінь */
+    border-radius: 4px;
+    padding-right: 40px; /* Місце для хрестика закриття */
+}
+
+/* Успіх (Зелений акцент) */
+.alert-success {
+    border-left-color: #28a745 !important;
+    /* Легкий градієнт для об'єму */
+    background: linear-gradient(90deg, rgba(40, 167, 69, 0.1), transparent) !important;
+}
+
+/* Помилка (Червоний акцент) */
+.alert-danger, .alert-error {
+    border-left-color: #dc3545 !important;
+    background: linear-gradient(90deg, rgba(220, 53, 69, 0.1), transparent) !important;
+}
+
+/* Інфо (Блакитний акцент) */
+.alert-info {
+    border-left-color: #17a2b8 !important;
+    background: linear-gradient(90deg, rgba(23, 162, 184, 0.1), transparent) !important;
+}
+
+/* Попередження (Жовтий акцент) */
+.alert-warning {
+    border-left-color: #ffc107 !important;
+    background: linear-gradient(90deg, rgba(255, 193, 7, 0.1), transparent) !important;
+}
+
+/* Виправлення хрестика (закриття) для темної теми */
+.alert .btn-close, .alert .close {
+    filter: invert(1); /* Робить чорний хрестик білим */
+    opacity: 0.8;
+}
+.alert .btn-close:hover, .alert .close:hover {
+    opacity: 1;
+}

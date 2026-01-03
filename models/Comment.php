@@ -62,6 +62,19 @@ class Comment extends \yii\db\ActiveRecord
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }
 
+    public function beforeDelete()
+    {
+        if (!parent::beforeDelete()) {
+            return false;
+        }
+
+
+        foreach (self::findAll(['parent_id' => $this->id]) as $child) {
+            $child->delete();
+        }
+
+        return true;
+    }
 
     public function beforeSave($insert)
     {
