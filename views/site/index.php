@@ -123,8 +123,16 @@ $this->title = 'IT Блог - Головна';
                 </div>
 
             <?php else: ?>
-                <div class="alert alert-info">
-                    За вашим запитом статей не знайдено.
+                <div class="text-center p-5 rounded" style="background-color: #2c2c2c; border: 2px dashed #444;">
+                    <i class="bi bi-journal-x display-1 text-muted mb-3 d-block" style="opacity: 0.3;"></i>
+                    <h4 class="text-white">Статей не знайдено</h4>
+                    <p class="text-muted">
+                        На жаль, за вашим запитом нічого немає. <br>
+                        Спробуйте змінити критерії пошуку або переглянути всі записи.
+                    </p>
+                    <a href="<?= \yii\helpers\Url::to(['site/index']) ?>" class="btn btn-primary mt-3">
+                        <i class="bi bi-arrow-repeat"></i> Показати всі статті
+                    </a>
                 </div>
             <?php endif; ?>
         </div>

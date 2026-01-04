@@ -30,12 +30,12 @@ class PostController extends Controller
             [
                 'access' => [
                     'class' => AccessControl::class,
-                    'only' => ['create', 'update', 'delete', 'delete-comment'], // Додали delete-comment до контролю
+                    'only' => ['create', 'update', 'delete', 'delete-comment'],
                     'rules' => [
                         [
                             'actions' => ['create', 'update', 'delete', 'delete-comment'],
                             'allow' => true,
-                            'roles' => ['@'], // Тільки авторизовані
+                            'roles' => ['@'],
                         ],
                     ],
                 ],
@@ -92,7 +92,6 @@ class PostController extends Controller
 
 
 
-        // Отримуємо ID всіх тегів поточної статті
         $currentTagIds = ArrayHelper::getColumn($model->tags, 'id');
         $relatedPosts = [];
 
@@ -127,7 +126,6 @@ class PostController extends Controller
             $relatedPosts = array_merge($relatedPosts, $morePosts);
         }
 
-        // Лічильник переглядів
         $model->updateCounters(['viewed' => 1]);
 
         return $this->render('view', [
@@ -188,7 +186,7 @@ class PostController extends Controller
     {
         $model = $this->findModel($id);
 
-        // Перевірка: Редагувати може Адмін АБО Автор
+
         if (!Yii::$app->user->identity->isAdmin() && $model->user_id !== Yii::$app->user->id) {
             throw new \yii\web\ForbiddenHttpException('Ви не маєте прав редагувати цю статтю.');
         }
@@ -219,7 +217,6 @@ class PostController extends Controller
 
     /**
      * Deletes an existing Post model.
-     * ВИПРАВЛЕНО: Перевірка прав та перенаправлення.
      */
     public function actionDelete($id)
     {
@@ -284,7 +281,7 @@ class PostController extends Controller
         if ($comment && !Yii::$app->user->isGuest &&
             (Yii::$app->user->id == $comment->user_id || Yii::$app->user->identity->isAdmin())) {
 
-            $comment->delete(); // Видаляємо (разом з відповідями через beforeDelete в моделі)
+            $comment->delete();
             Yii::$app->session->setFlash('success', 'Коментар видалено.');
         } else {
             Yii::$app->session->setFlash('error', 'Помилка видалення коментаря.');

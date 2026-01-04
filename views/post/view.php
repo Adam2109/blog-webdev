@@ -142,47 +142,72 @@ $this->params['breadcrumbs'][] = $this->title;
 
             <?php if (!empty($model->comments)): ?>
                 <?php foreach ($model->comments as $comment): ?>
-                    <div class="card mb-3 shadow-sm <?= $comment->parent_id ? 'ms-5 border-start border-primary border-4' : '' ?>">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <h5 class="card-title text-primary m-0">
-                                    <?= Html::encode($comment->user ? $comment->user->username : 'Гість') ?>
-                                    <?php if($comment->parent_id): ?>
-                                        <small class="text-muted" style="font-size: 0.8em;">(відповідь)</small>
-                                    <?php endif; ?>
-                                </h5>
 
-                                <small class="text-muted">
-                                    <?= Yii::$app->formatter->asDate($comment->date, 'medium') ?>
+                    <?php
+                    $avatar = ($comment->user && $comment->user->image)
+                            ? Yii::getAlias('@web/uploads/') . $comment->user->image
+                            : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                    ?>
 
-                                    <?php if (!Yii::$app->user->isGuest && ($comment->user && Yii::$app->user->id == $comment->user->id || Yii::$app->user->identity->isAdmin())): ?>
-                                        <?= Html::a('<i class="bi bi-trash"></i>', ['post/delete-comment', 'id' => $comment->id], [
-                                                'class' => 'text-danger ms-2 text-decoration-none',
-                                                'title' => 'Видалити коментар',
-                                                'data' => [
-                                                        'confirm' => 'Ви впевнені? Це також видалить усі відповіді на цей коментар.',
-                                                        'method' => 'post',
-                                                ],
-                                        ]) ?>
+                    <div class="card mb-3 shadow-sm <?= $comment->parent_id ? 'ms-5 border-start border-info border-4' : '' ?>" style="background-color: #2c2c2c; border: 1px solid #444;">
+                        <div class="card-body p-3">
+                            <div class="d-flex">
+
+                                <div class="flex-shrink-0">
+                                    <img src="<?= $avatar ?>"
+                                         class="rounded-circle border border-secondary"
+                                         alt="<?= Html::encode($comment->user ? $comment->user->username : 'Гість') ?>"
+                                         style="width: 50px; height: 50px; object-fit: cover;">
+                                </div>
+
+                                <div class="flex-grow-1 ms-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <h6 class="fw-bold text-info mb-1">
+                                            <?= Html::encode($comment->user ? $comment->user->username : 'Гість') ?>
+
+                                            <?php if ($comment->user_id == $model->user_id): ?>
+                                                <span class="badge bg-primary ms-1" style="font-size: 0.7em;">Автор</span>
+                                            <?php endif; ?>
+                                        </h6>
+
+                                        <small class="text-muted">
+                                            <?= Yii::$app->formatter->asDate($comment->date, 'medium') ?>
+
+                                            <?php if (!Yii::$app->user->isGuest && ($comment->user && Yii::$app->user->id == $comment->user->id || Yii::$app->user->identity->isAdmin())): ?>
+                                                <?= Html::a('<i class="bi bi-trash"></i>', ['post/delete-comment', 'id' => $comment->id], [
+                                                        'class' => 'text-danger ms-2 text-decoration-none',
+                                                        'title' => 'Видалити коментар',
+                                                        'data' => [
+                                                                'confirm' => 'Видалити цей коментар?',
+                                                                'method' => 'post',
+                                                        ],
+                                                ]) ?>
+                                            <?php endif; ?>
+                                        </small>
+                                    </div>
+
+                                    <div class="text-white mb-2" style="font-size: 0.95rem;">
+                                        <?= nl2br(Html::encode($comment->text)) ?>
+                                    </div>
+
+                                    <?php if (!Yii::$app->user->isGuest): ?>
+                                        <button class="btn btn-sm btn-link text-decoration-none p-0 reply-btn text-secondary"
+                                                data-id="<?= $comment->id ?>"
+                                                data-user="<?= Html::encode($comment->user ? $comment->user->username : 'Гість') ?>">
+                                            <i class="bi bi-reply"></i> Відповісти
+                                        </button>
                                     <?php endif; ?>
-                                </small>
+                                </div>
                             </div>
-                            <p class="card-text">
-                                <?= Html::encode($comment->text) ?>
-                            </p>
-
-                            <?php if (!Yii::$app->user->isGuest): ?>
-                                <button class="btn btn-sm btn-outline-secondary reply-btn"
-                                        data-id="<?= $comment->id ?>"
-                                        data-user="<?= Html::encode($comment->user->username) ?>">
-                                    ↩ Відповісти
-                                </button>
-                            <?php endif; ?>
                         </div>
                     </div>
+
                 <?php endforeach; ?>
             <?php else: ?>
-                <p class="text-muted">Поки немає коментарів. Будьте першим!</p>
+                <div class="p-4 text-center text-muted border rounded mb-3" style="background-color: #2c2c2c; border: 1px dashed #555;">
+                    <i class="bi bi-chat-square-text display-6 d-block mb-3 opacity-50"></i>
+                    Поки що немає коментарів. Будьте першим!
+                </div>
             <?php endif; ?>
 
             <div class="mt-4">

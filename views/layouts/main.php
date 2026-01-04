@@ -84,7 +84,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
             $('.alert').fadeOut('slow', function() {
                 $(this).remove();
             });
-        }, 3000); // 3000 мс = 3 секунди
+        }, 3500); 
     JS;
         $this->registerJs($js);
         ?>
@@ -94,7 +94,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <div class="container">
             <?php if (!empty($this->params['breadcrumbs'])): ?>
                 <?= Breadcrumbs::widget([
-                        'homeLink' => ['label' => 'Головна', 'url' => ['/site/index']], // <--- ЗАМІНА HOME НА ГОЛОВНА
+                        'homeLink' => ['label' => 'Головна', 'url' => ['/site/index']],
                         'links' => $this->params['breadcrumbs'],
                 ]) ?>
             <?php endif ?>
