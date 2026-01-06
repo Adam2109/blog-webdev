@@ -194,9 +194,7 @@ class SiteController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
 
-
             $model->imageFile = \yii\web\UploadedFile::getInstance($model, 'imageFile');
-
 
             if ($model->validate()) {
 
@@ -204,6 +202,9 @@ class SiteController extends Controller
                     $model->upload();
                 }
 
+                if (!empty($model->new_password)) {
+                    $model->password_hash = Yii::$app->security->generatePasswordHash($model->new_password);
+                }
 
                 $model->save(false);
 

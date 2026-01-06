@@ -10,7 +10,7 @@ use yii\web\UploadedFile;
 class User extends ActiveRecord implements IdentityInterface
 {
     public $imageFile;
-
+    public $new_password;
     public static function tableName()
     {
         return 'user';
@@ -26,10 +26,22 @@ class User extends ActiveRecord implements IdentityInterface
             [['email'], 'email'],
             [['role'], 'integer'],
             [['imageFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+            [['new_password'], 'string', 'min' => 6],
         ];
     }
 
-
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => 'Логін',
+            'email' => 'Email',
+            'password_hash' => 'Пароль',
+            'role' => 'Роль',
+            'imageFile' => 'Аватар',
+            'new_password' => 'Новий пароль (залиште пустим, якщо не змінюєте)',
+        ];
+    }
 
     public function getPosts()
     {

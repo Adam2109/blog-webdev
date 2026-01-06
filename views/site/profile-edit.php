@@ -7,14 +7,14 @@ use yii\bootstrap5\ActiveForm;
 /** @var app\models\User $model */
 
 $this->title = 'Редагування профілю';
-$this->params['breadcrumbs'][] = ['label' => 'Мій профіль', 'url' => ['site/profile']];
+$this->params['breadcrumbs'][] = ['label' => 'Мій профіль', 'url' => ['profile']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="site-profile-edit">
+<div class="user-profile-edit">
+
     <div class="row justify-content-center">
         <div class="col-md-6">
-
-            <div class="card shadow-sm">
+            <div class="card shadow">
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0"><i class="bi bi-gear"></i> Налаштування профілю</h4>
                 </div>
@@ -22,36 +22,38 @@ $this->params['breadcrumbs'][] = $this->title;
 
                     <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-                    <?= $form->field($model, 'username')->textInput(['maxlength' => true])->label('Ваше ім\'я (Логін)') ?>
+                    <?= $form->field($model, 'username')->textInput(['maxlength' => true]) ?>
 
                     <?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?>
 
-                    <div class="mb-3">
-                        <label class="form-label">Аватар</label>
-                        <div class="d-flex align-items-center mb-3">
-                            <?php
-                            $avatar = $model->image
-                                ? Yii::getAlias('@web/uploads/') . $model->image
-                                : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
-                            ?>
-                            <img src="<?= $avatar ?>" class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover; border: 2px solid #444;">
-
-                            <?= $form->field($model, 'imageFile')->fileInput(['class' => 'form-control'])->label(false) ?>
-                        </div>
+                    <hr>
+                    <div class="border rounded p-3 mb-3">
+                        <i class="bi bi-shield-lock"></i> <strong>Безпека</strong>
+                        <?= $form->field($model, 'new_password')->passwordInput()->hint('Залиште це поле пустим, якщо не хочете змінювати пароль') ?>
                     </div>
-
                     <hr>
 
-                    <div class="d-grid gap-2">
-                        <?= Html::submitButton('Зберегти зміни', ['class' => 'btn btn-success']) ?>
-                        <?= Html::a('Скасувати', ['site/profile'], ['class' => 'btn btn-outline-secondary']) ?>
+                    <div class="mb-3">
+                        <label class="form-label">Ваш поточний аватар:</label><br>
+                        <?php
+                        $avatar = $model->image
+                                ? Yii::getAlias('@web/uploads/') . $model->image
+                                : 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+                        ?>
+                        <img src="<?= $avatar ?>" class="rounded-circle mb-2" width="100" height="100" style="object-fit: cover;">
+                    </div>
+
+                    <?= $form->field($model, 'imageFile')->fileInput() ?>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <?= Html::submitButton('Зберегти зміни', ['class' => 'btn btn-success btn-lg']) ?>
+                        <?= Html::a('Скасувати', ['profile'], ['class' => 'btn btn-outline-secondary']) ?>
                     </div>
 
                     <?php ActiveForm::end(); ?>
 
                 </div>
             </div>
-
         </div>
     </div>
 </div>
